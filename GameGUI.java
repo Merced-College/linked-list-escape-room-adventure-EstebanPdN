@@ -1,159 +1,217 @@
-import java.awt.EventQueue;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Image;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import java.awt.Font;
 
 public class GameGUI extends JFrame {
 
-	private JPanel contentPane;
+    private AdventureGame game;
+    private Scene currentScene;
 
-	private AdventureGame game;
-	private Scene currentScene;
+    private JLabel imageLabel;
+    private JTextArea inventoryArea;
+    private JTextArea descriptionArea;
+    private JTextArea roomItemArea;
+    private JButton choice1Button;
+    private JButton choice2Button;
+    private JButton pickUpButton;
+    private JLabel titleLabel;
 
-	private JLabel titleLabel;
-	private JTextArea descriptionArea;
-	private JLabel imageLabel;
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            GameGUI frame = new GameGUI();
+            frame.setVisible(true);
+        });
+    }
 
-	private JButton choice1;
-	private JButton choice2;
-	private JButton pickUpButton;
+    public GameGUI() {
+        game = new AdventureGame();
 
-	private JTextArea inventoryArea;
-	private JTextArea roomItemArea;
+        setTitle("Escape Room Adventure");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(1100, 700);
+        setLocationRelativeTo(null);
 
-	public static void main(String[] args) {
-		EventQueue.invokeLater(() -> {
-			try {
-				GameGUI frame = new GameGUI();
-				frame.setVisible(true);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-	}
+        JPanel mainPanel = new JPanel(new BorderLayout(12, 12));
+        mainPanel.setBorder(new EmptyBorder(12, 12, 12, 12));
+        setContentPane(mainPanel);
 
-	public GameGUI() {
+        // TITLE
+        titleLabel = new JLabel("Escape Room Adventure");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 26));
+        mainPanel.add(titleLabel, BorderLayout.NORTH);
 
-		game = new AdventureGame();
+        // CENTER (image + right panel)
+        JPanel centerPanel = new JPanel(new GridLayout(1, 2, 12, 12));
+        mainPanel.add(centerPanel, BorderLayout.CENTER);
 
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 800, 550);
+        // IMAGE PANEL
+        JPanel imagePanel = new JPanel(new BorderLayout());
+        imagePanel.setBorder(BorderFactory.createTitledBorder("Image"));
+        centerPanel.add(imagePanel);
 
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
-		contentPane.setLayout(null);
-		setContentPane(contentPane);
+        imageLabel = new JLabel("No image", SwingConstants.CENTER);
+        imagePanel.add(imageLabel);
 
-		// TITLE
-		titleLabel = new JLabel("Title");
-		titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
-		titleLabel.setBounds(20, 10, 400, 30);
-		contentPane.add(titleLabel);
+        // RIGHT PANEL
+        JPanel rightPanel = new JPanel();
+        rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
+        centerPanel.add(rightPanel);
 
-		// DESCRIPTION
-		descriptionArea = new JTextArea();
-		descriptionArea.setBounds(20, 50, 400, 100);
-		descriptionArea.setEditable(false);
-		descriptionArea.setLineWrap(true);
-		descriptionArea.setWrapStyleWord(true);
-		contentPane.add(descriptionArea);
+        // INVENTORY
+        inventoryArea = new JTextArea();
+        inventoryArea.setEditable(false);
+        inventoryArea.setFont(new Font("Arial", Font.PLAIN, 18));
 
-		// IMAGE
-		imageLabel = new JLabel();
-		imageLabel.setBounds(20, 160, 400, 250);
-		contentPane.add(imageLabel);
+        JScrollPane inventoryScroll = new JScrollPane(inventoryArea);
+        inventoryScroll.setBorder(BorderFactory.createTitledBorder("Inventory"));
+        inventoryScroll.setPreferredSize(new Dimension(400, 250));
+        rightPanel.add(inventoryScroll);
 
-		// BUTTONS
-		choice1 = new JButton("Choice 1");
-		choice1.setBounds(20, 430, 180, 30);
-		contentPane.add(choice1);
+        rightPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
-		choice2 = new JButton("Choice 2");
-		choice2.setBounds(220, 430, 180, 30);
-		contentPane.add(choice2);
+        // ROOM ITEM
+        roomItemArea = new JTextArea();
+        roomItemArea.setEditable(false);
 
-		// INVENTORY
-		inventoryArea = new JTextArea();
-		inventoryArea.setBounds(450, 50, 300, 150);
-		inventoryArea.setEditable(false);
-		inventoryArea.setLineWrap(true);
-		inventoryArea.setWrapStyleWord(true);
-		contentPane.add(inventoryArea);
+        JScrollPane itemScroll = new JScrollPane(roomItemArea);
+        itemScroll.setBorder(BorderFactory.createTitledBorder("Room Item"));
+        itemScroll.setPreferredSize(new Dimension(400, 120));
+        rightPanel.add(itemScroll);
 
-		// ROOM ITEM DISPLAY
-		roomItemArea = new JTextArea();
-		roomItemArea.setBounds(450, 220, 300, 60);
-		roomItemArea.setEditable(false);
-		roomItemArea.setLineWrap(true);
-		roomItemArea.setWrapStyleWord(true);
-		contentPane.add(roomItemArea);
+        rightPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
-		// PICK UP BUTTON
-		pickUpButton = new JButton("Pick Up Item");
-		pickUpButton.setBounds(450, 300, 180, 30);
-		contentPane.add(pickUpButton);
+        // PICK UP BUTTON
+        pickUpButton = new JButton("Pick Up Item");
+        pickUpButton.setAlignmentX(CENTER_ALIGNMENT);
+        rightPanel.add(pickUpButton);
 
-		// BUTTON ACTIONS
-		choice1.addActionListener(e -> {
-			game.makeChoice(0);
-			updateScreen();
-		});
+        // BOTTOM PANEL
+        JPanel bottomPanel = new JPanel(new BorderLayout(12, 12));
+        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
 
-		choice2.addActionListener(e -> {
-			game.makeChoice(1);
-			updateScreen();
-		});
+        // DESCRIPTION
+        descriptionArea = new JTextArea();
+        descriptionArea.setEditable(false);
+        descriptionArea.setFont(new Font("Arial", Font.PLAIN, 18));
 
-		pickUpButton.addActionListener(e -> {
-			game.pickUpCurrentItem();
-			updateScreen();
-		});
+        JScrollPane descScroll = new JScrollPane(descriptionArea);
+        descScroll.setBorder(BorderFactory.createTitledBorder("Description"));
+        descScroll.setPreferredSize(new Dimension(700, 150));
+        bottomPanel.add(descScroll, BorderLayout.CENTER);
 
-		updateScreen();
-	}
+        // ACTION BUTTONS
+        JPanel actionsPanel = new JPanel(new GridLayout(1, 2, 12, 12));
+        bottomPanel.add(actionsPanel, BorderLayout.EAST);
 
-	private void updateScreen() {
+        choice1Button = new JButton("Action 1");
+        choice2Button = new JButton("Action 2");
 
-		currentScene = game.getCurrentScene();
+        actionsPanel.add(choice1Button);
+        actionsPanel.add(choice2Button);
 
-		// TEXT
-		titleLabel.setText(currentScene.getTitle());
-		descriptionArea.setText(currentScene.getDescription());
+        // ACTIONS
+        choice1Button.addActionListener(e -> {
+            game.makeChoice(0);
+            updateScreen();
+            checkWin();
+        });
 
-		// BUTTONS
-		if (currentScene.getChoices().size() > 0) {
-			choice1.setText(currentScene.getChoices().get(0).getText());
-			choice1.setEnabled(true);
-		} else {
-			choice1.setEnabled(false);
-		}
+        choice2Button.addActionListener(e -> {
+            game.makeChoice(1);
+            updateScreen();
+            checkWin();
+        });
 
-		if (currentScene.getChoices().size() > 1) {
-			choice2.setText(currentScene.getChoices().get(1).getText());
-			choice2.setEnabled(true);
-		} else {
-			choice2.setEnabled(false);
-		}
+        pickUpButton.addActionListener(e -> {
+            game.pickUpCurrentItem();
+            updateScreen();
+        });
 
-		// INVENTORY
-		inventoryArea.setText(game.getPlayer().getInventoryText());
+        updateScreen();
+    }
 
-		// ROOM ITEM
-		if (currentScene.getItem() != null) {
-			roomItemArea.setText("Item here:\n" + currentScene.getItem().toString());
-			pickUpButton.setEnabled(true);
-		} else {
-			roomItemArea.setText("No item in this room");
-			pickUpButton.setEnabled(false);
-		}
+    private void updateScreen() {
+        currentScene = game.getCurrentScene();
 
-		// IMAGE (simple + reliable)
-		try {
-			String path = "images2/" + currentScene.getImagePath();
-			ImageIcon icon = new ImageIcon(path);
-			imageLabel.setIcon(icon);
-		} catch (Exception e) {
-			imageLabel.setIcon(null);
-		}
-	}
+        if (currentScene == null) return;
+
+        titleLabel.setText(currentScene.getTitle());
+        descriptionArea.setText(currentScene.getDescription());
+        inventoryArea.setText(game.getPlayer().getInventoryText());
+
+        // CHOICES
+        if (currentScene.getChoices().size() > 0) {
+            choice1Button.setText(currentScene.getChoices().get(0).getText());
+            choice1Button.setEnabled(true);
+        } else {
+            choice1Button.setEnabled(false);
+        }
+
+        if (currentScene.getChoices().size() > 1) {
+            choice2Button.setText(currentScene.getChoices().get(1).getText());
+            choice2Button.setEnabled(true);
+        } else {
+            choice2Button.setEnabled(false);
+        }
+
+        // ITEM
+        if (currentScene.getItem() != null) {
+            roomItemArea.setText(currentScene.getItem().toString());
+            pickUpButton.setEnabled(true);
+        } else {
+            roomItemArea.setText("No item in this room");
+            pickUpButton.setEnabled(false);
+        }
+
+        loadImage();
+    }
+
+    private void loadImage() {
+        try {
+            String path = "images2/" + currentScene.getImagePath();
+
+            java.io.File file = new java.io.File(path);
+
+            System.out.println("Trying: " + file.getAbsolutePath());
+
+            if (!file.exists()) {
+                imageLabel.setText("NOT FOUND:\n" + path);
+                imageLabel.setIcon(null);
+                return;
+            }
+
+            ImageIcon icon = new ImageIcon(file.getAbsolutePath());
+
+            Image img = icon.getImage().getScaledInstance(
+                    500,
+                    350,
+                    Image.SCALE_SMOOTH
+            );
+
+            imageLabel.setText("");
+            imageLabel.setIcon(new ImageIcon(img));
+
+        } catch (Exception e) {
+            imageLabel.setText("ERROR loading image");
+            imageLabel.setIcon(null);
+        }
+    }
+
+    private void checkWin() {
+        if (currentScene.getSceneId() == 5) {
+            if (game.canWinGame()) {
+                JOptionPane.showMessageDialog(this, "You escaped! You win!");
+            } else {
+                JOptionPane.showMessageDialog(this, "You need keycard and code note.");
+            }
+
+            choice1Button.setEnabled(false);
+            choice2Button.setEnabled(false);
+            pickUpButton.setEnabled(false);
+        }
+    }
 }

@@ -5,6 +5,7 @@ EscapeRoomStarter/
 │   ├── Item.java
 │   ├── Scene.java
 │   ├── Node.java
+│   ├── GameGUI.java
 │   ├── SceneLinkedList.java
 │   ├── Player.java
 │   ├── GameLoader.java
@@ -19,4 +20,6 @@ EscapeRoomStarter/
     ├── storage.jpg
     ├── office.jpg
     ├── hallway.jpg
+    ├── secret.jpg
     └── exit.jpg
+
